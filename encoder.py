@@ -4,7 +4,8 @@ from huffman import HuffmanTree
 import numpy as np
 
 
-def main():
+def encoder():
+    print('Start encoding...')
     image = Image.open(IMAGE_PATH)
     ycbcr = image.convert('YCbCr')
 
@@ -33,7 +34,7 @@ def main():
                 dct_block = DCT2D(cur_block)
 
                 # quantization type:1 use Q_y type:2 use Q_c
-                quantized_block = quantize(dct_block, 1)
+                quantized_block = quantize(dct_block, 1 if k==0 else 2)
 
                 # zigzag scan
                 zigzag = zigzag_scan(quantized_block)
@@ -43,8 +44,6 @@ def main():
                 ac[block_index, :, k] = zigzag[1:]
             block_index += 1
 
-    print('Starting entropy code')
-
     # entropy code
     huffman_dc_Y = HuffmanTree(np.vectorize(bits_required)(dc[:,0]))
     huffman_dc_C = HuffmanTree(np.vectorize(bits_required)(dc[:,1:].flat))
@@ -52,14 +51,17 @@ def main():
                                        for i in range(blocks)))
     huffman_ac_C = HuffmanTree(flatten(RLE(ac[i,:,j])[0]
                                        for i in range(blocks) for j in [1,2]))
+
     tables = {
         'dc_y': huffman_dc_Y.value_to_huffman_repr(),
         'dc_c': huffman_dc_C.value_to_huffman_repr(),
         'ac_y': huffman_ac_Y.value_to_huffman_repr(),
         'ac_c': huffman_ac_C.value_to_huffman_repr(),
     }
+
     print('Saving to file...')
     save_to_file(OUTPUT_PATH, dc, ac, blocks, tables)
 
+
 if __name__ == '__main__':
-    main()
+    encoder()

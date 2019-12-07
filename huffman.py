@@ -9,6 +9,11 @@ class HuffmanTree:
         def __lt__(self, other):
             return self.freq < other.freq
 
+        def __eq__(self, other):
+            l = self.freq, self.value, self.left, self.right
+            r = other.freq, other.value, other.left, other.right
+            return l == r
+
     def __init__(self, array):
         q = PriorityQueue()
 
