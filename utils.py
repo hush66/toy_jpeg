@@ -4,7 +4,7 @@ import math
 import os
 
 # Constant Value
-IMAGE_PATH = './lena.jpg'
+IMAGE_PATH = './lena512color.tiff'
 OUTPUT_PATH = './encoded'
 REBUILD_PATH = './rebuild.jpg'
 BLOCK_SIDE = 8
